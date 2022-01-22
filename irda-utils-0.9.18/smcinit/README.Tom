@@ -1,0 +1,88 @@
+tosh-smcinit
+============
+
+I've modified the tosh5100-smcinit.c to make it more flexible and renamed
+it to tosh-smcinit.c because it works with several notebooks of Toshiba.
+
+Please note that the names of the notebooks differ from country to 
+country. I used the German names, you can see them at http://www.toshiba.de
+or http://newsletter.toshiba-tro.de/main (detailed hardware description)
+
+In many newer notebooks, Toshiba changed the SuperIO chip. They use no
+longer the LPC47N227, instead other chips are used like LPC47N24x. But we
+are working on modify the smc-ircc driver and smcinit so this chips will 
+also work in the near future.
+
+If you own an other notebook than a Toshiba, your model is not in my list below
+and it use a newer chipset from Intel and the LPC47N2xx from SMSC, there are 
+good chances to get IrDA working. If you have MS Windows installed, please 
+send me your settings of the IrDA and I will include it. I need the IRQ, DMA 
+and the 2 I/O port settings. Please also attach a copy of your /proc/interrupts,
+/proc/ioports and /proc/dma
+
+tosh-smcinit needs 4 parameters to initalize the SMC chip:
+SIR IOPort, FIR IOPort, FIR Interrupt and FIR DMA. 
+
+I tested the following models, use the parameter in the list:
+
+Model             SIR_IO    FIR_IO    FIR_IRQ    FIR_DMA     ID     PCI-ID
+Satellite 3000    no Irda
+Satellite 5100    0x3f8     0x130          3        3        0x5a    248c    *
+Satellite 5200    0x3f8     0x130          3        3        0x5a    248c    *
+SatPro 2100       0x3f8     0x130          4        3        0x5a    248c
+SatPro 6100       0x3f8     0x130          3        1        0x5a    248c
+SatPro M10        0x2f8     0x130          3        1        0x5a    248c
+Satellite A10     no Irda
+Satellite P10     0x3f8     0x6f8          3        3        0x5a    248c
+Satellite P20     0x3f8     0x6f8          3        3        0x5a    248c
+Satellite A30     0x3f8     0x6f8          3        3        0x5a    248c
+Satellite M30     0x3f8     0x130          3        3        0x7a    24cc    *
+Satellite A40     no Irda
+Portege A100      no Irda
+Portege M100      0x3f8     0x130          3        1        0x5a    24cc
+Portege M200      0x3f8     0x130          3        3        0x7a    24cc    *
+Portege R100      no Irda
+Tecra 9100        0x3f8     0x130          3        1        0x5a    248c
+Tecra M1          0x3f8     0x130          3        1        0x5a    24cc
+Tecra M2          0x3f8     0x130          3        1        0x7a    24cc
+Tecra S1          unknown IRDA-Chip
+TE 2300           unknown IRDA-Chip
+
+(* = Compiled-In values, in this case, you don't need parameters)
+
+Other values for the parameters are sometimes also possible, if you got
+conflicts.
+
+
+OK, to make it running, you have to do the following steps:
+
+- Compile it.
+- Run tosh-smcinit *before* you insert the "smc-ircc" kernel module. 
+  For example you can do this in the /etc/modules.conf
+  Without parameters, "tosh-smcinit" give no output, but if you run 
+  it as "tosh-smcinit -v", you will see if all should work.
+  With --sirio=0x03f8, --firio=0x130, --firirq=3 and --firdma=3 you can
+  set the parameters.
+  
+    
+More detailed instructions are in README.Rob, just replace tosh5100-smcinit
+with tosh-smcinit in his text. :)
+
+If you use a PCMCIA or miniPCI slot (also built-in WLAN), on some machines
+are conflicts at the I/O ports between IrDA and some cards. Sometimes it
+helps if you change I/O port range, which "pcmcia-cs" uses. The line
+
+  include port 0x160-0x3f7, port 0x400-0x4ff, port 0x800-0x8ff, port 0xc00-0xcff
+
+in /etc/pcmcia/config.opts regulates it.
+
+Also IRQ-conflicts with other built-in components are possible. For example,
+my Atheros AR5212 miniPCI-Card got the IRQ 3 assigned from the ACPI BIOS. 
+If you computer have a "classic" BIOS menu, look at the entry about the 
+PCI-IRQ Routing. If the computer is "legacy-free", there are good chances
+to include the routing with the "acpi_irq_balance" and "acpi_irq_pci=n"
+kernel parameters.
+
+
+Thomas Pinz, Jan 2004, V0.3
+E-Mail: tom_p@gmx.de

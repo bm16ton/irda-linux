@@ -1,0 +1,13 @@
+Package: irda-utils-dbgsym
+Source: irda-utils
+Version: 0.9.18-15ubuntu1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Installed-Size: 186
+Depends: irda-utils (= 0.9.18-15ubuntu1)
+Section: debug
+Priority: optional
+Description: debug symbols for irda-utils
+Build-Ids: 0c61ca13c5d879b18ed1c200253abf150bd654b4 0e6663f66de02aa87c8c980ea01cf373ea59a15a 0fdf072ecc18777af88568e911d346cde23946f4 47ac8620d00262531d1d1e82805892247dcb8cef 7bf38df1c91e333461c1361375b3d971836492f6 b8308928ecc2e4b7e7e4b5063334fe548e0182e3 fc0fda39289395709d528d4960e64f2ef02df75a
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>

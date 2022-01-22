@@ -1,0 +1,75 @@
+
+
+ Installing smcinit
+ ==================
+
+ 
+ Prerequisites
+ -------------
+ 
+ To successfully compile and install SMCINIT package you
+ need to:
+ 
+ * have a Linux 2.4.x based system. Prefferably Linux 2.4.18
+ kernel or better. 
+ 
+ * have GCC compiler and glibc devel package installed
+ 
+ * have pciutils and pciutils-devel packages installed
+ 
+ 
+ Compile & install
+ -----------------
+ 
+ If you got the dist tarball, such as smcinit-0.5.tar.gz, untar it:
+
+   tar xvfj smcinit-0.5.tar.gz
+   cd smcinit-0.5
+
+ then:
+
+   ./configure
+   make
+   make install (as root user)
+   
+
+ If you brave just checked out from the irda CVS, one more step is needed first:
+
+   ./autogen.sh
+   ./configure
+   make
+   make install (as root user)
+
+   
+ Notes
+ -----
+ 
+ I tested the package on SuSE 8.1 and RedHat 9.0. It should work for any
+ recent Linux distribution.
+ 
+  Here are relevant packages to compile on SuSE 8.1:
+    pciutils-devel-2.1.10-33
+    pciutils-2.1.10-33
+    libgcc-3.2-39
+    gcc-3.2-39
+    glibc-2.2.5-153
+    glibc-locale-2.2.5-154
+    glibc-devel-2.2.5-154
+
+  Here are relevant packages to compile on RedHat 9.0:
+    pciutils-2.1.10-7
+    pciutils-devel-2.1.10-7
+    gcc-3.2.2-5
+    libgcc-3.2.2-5
+    gcc-c++-3.2.2-5
+    glibc-devel-2.3.2-11.9
+    glibc-common-2.3.2-11.9
+    glibc-2.3.2-11.9
+    glibc-kernheaders-2.4-8.10
+
+  Send me your story and packages when you compile these package on a system
+  other than above ones. Thank you very much!
+  
+  
+  Claudiu Costin <claudiuc@kde.org>
+  July 10, 2003

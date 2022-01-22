@@ -1,0 +1,15 @@
+# Automatically added by dh_installinit/13.5.3
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	if [ -z "${DPKG_ROOT:-}" ] && [ -x "/etc/init.d/irda-utils" ]; then
+		update-rc.d irda-utils start 20 2 3 4 5 . stop 20 1 . >/dev/null
+		invoke-rc.d irda-utils restart || exit 1
+	fi
+fi
+# End automatically added section
+# Automatically added by dh_installinit/13.5.3
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	if [ -x "/etc/init.d/irda-setup" ]; then
+		update-rc.d irda-setup start 47 S . >/dev/null || exit 1
+	fi
+fi
+# End automatically added section

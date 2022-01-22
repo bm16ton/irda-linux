@@ -1,0 +1,68 @@
+
+ SMCINIT
+ =======
+
+
+ Introduction
+ ------------
+
+ This package is good for you if you own a Linux machine that have SMC-IRCC based
+ IrDA subsystem and the BIOS doesn't initialize it. Otherwise you don't
+ need it at all.
+
+ If you reading here, then you may be the unhappy owner of Toshiba Satellite
+ 1800, Toshiba Satellite 5100 or Toshiba Tecra 9100 laptop. Well, there's
+ a chance that a bunch of other Toshiba laptops may share the same buggy BIOS
+ and IrDA problems.
+
+
+ Making it work
+ --------------
+
+ Daniele Peri, Rob Miller and Paul Hampson mananged to build little utilities
+ that initialize the LPC47N227 SuperIO allowing smc-ircc IrDA kernel driver
+ to detect and use the SMSC chip.
+
+ Note that for starting with Linux kernels from 2.6.x series this initializing
+ will be integrated to the new smc-ircc kernel driver.
+
+
+ Documentation
+ -------------
+
+ Read the man pages.
+
+ man smcminit           (intro to smcinit utilities)
+
+ man tosh1800-smcinit   (built from Daniele Peri documentation and with my own additions)
+
+ Read the very good documetation made by utilities authors. Note that man pages have
+ been built from these docs.
+
+ README.Tom           - Thomas Pinz documentation on improvements made over 0.3-1 version
+ README.Peri          - Peri's README file
+ README.Rob           - Rob Miller irda.html page rendered as text file
+ RobMiller-irda.html  - The original Rob's irda.html page, renamed for posible name clashing reason
+ CHANGELOG.Peri       - Daniele Peri own changelog file
+ ChangeLog            - This package changelog
+ INSTALL              - Installation instruction for this package
+
+
+
+ Contact
+ -------
+
+ The SMCINIT package home page is:
+   http://irda.sourceforge.net/smcinit/
+
+ See the AUTHORS file
+ Please send the bugs and your wishes to the authors.
+
+ The nice and important thing you can do is to send me (Claudiu Costin)
+ your success story for a laptop or computer which is not listed here.
+
+
+
+ Claudiu Costin <claudiuc@kde.org>
+ April 13, 2004
+

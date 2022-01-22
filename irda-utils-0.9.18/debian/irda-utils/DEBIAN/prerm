@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installinit/13.5.3
+if [ -z "${DPKG_ROOT:-}" ] && [ "$1" = remove ] && [ -x "/etc/init.d/irda-utils" ] ; then
+	invoke-rc.d irda-utils stop || exit 1
+fi
+# End automatically added section

@@ -1,0 +1,14 @@
+Begin4
+Title:          smcinit
+Version:        0.5
+Entered-date:   Mon Feb 27 2006
+Description:    Initialize IrDA SMC chip for laptops based on SuperIO chipset
+Keywords:       IrDA, infrared, Toshiba, laptop, Satellite, Tecra, SuperIO, nc6000
+Author:         Claudiu Costin <claudiuc@kde.org>
+Maintained-by:  Claudiu Costin <claudiuc@kde.org>, Samuel Ortiz <samuel.ortiz@nokia.com>
+Primary-site:   http://irda.sourceforge.net/smcinit/
+Home-page:      http://irda.sourceforge.net/smcinit/
+Original-site:  http://irda.sourceforge.net/smcinit/
+Platforms:      Linux only
+Copying-policy: GNU Public License
+End

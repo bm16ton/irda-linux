@@ -1,0 +1,27 @@
+Thomas Pinz <tom_p@gmx.de> 
+ - many improvements for making the program to work
+ with a lot Toshiba Satellite models
+
+
+Daniele Peri <peri@csai.unipa.it>
+
+ - tosh1800-smcinit.c (a.k.a toshsat1800-irdasetup.c)
+
+
+Rob Miller <jmarino at vodafone dot es>
+
+ - tosh5100-smcinit.c 
+
+José Manuel Mariño Mariño <peri@csai.unipa.it>
+
+ - tosh2450-smcinit.c
+ 
+
+Claudiu Costin <claudiuc@kde.org>
+
+ - manual pages, various cleanups, RPM package and 
+ Linux distros integration
+
+Jérôme Fenal <jfenal@free.fr>
+
+ - autoconf/automake, code cleanup, auto-discovery of entry point 

@@ -1,0 +1,178 @@
+IRDA on the Toshiba 5100
+
+Skip to here for info on the bugfix so you can use smc-ircc with SWSUSP.
+
+The 5100 has an Intel 82801CAM PCI bridge which includes an LPC interface; on
+this interface is an SMSC LPC47N227 Super I/O chip. The 47N227 has various
+interfaces (FDC, 2xRS232, IR, parallel), but it seems that only the IR is
+connected out to a physical port on the case. There are no standard serial
+(RS232) ports on the 5100. Unfortunately the BIOS does not set up either the
+LPC interface or the SMC IR in a way that the Linux smc-ircc driver expects.
+
+This is the same story as on the Satellite 1800 but a different PCI bridge
+interface. The work here is based directly on Paul Hampson's post (updated
+link!) to Linux-IrDA, although I made a small change to get it working.
+
+The program tosh5100-smcinit.c performs both of these functions, (1) set up the
+82801 LPC interface to pass the standard COM1 port (and hopefully the SMC FIR
+on DMA 3 as well - but see below), and (2) set up the 47N227 to enable SIR on
+its UART2, assign it to 0x3f8 irq 3, and assign the FIR interface to 0x130.
+
+You should end up with something like
+ kernel: SMC IrDA Controller found
+ kernel:  IrCC version 2.0, firport 0x130, sirport 0x2f8 dma=3, irq=3
+ kernel: irport_open_R0016f49f()
+
+in your logs after "modprobe smc-ircc". I have seen it fail the first time when
+loaded my modprobe due to "irport_open_R0016f49f(), can't get iobase of 0x3f8",
+just modprobe again. I've not seen this when loading by from /etc/modules.
+
+Please note: (1) I have only been able to test the SIR portion of this, as my
+motivator was to enable connecting a Palm III equivalent, and (2) development
+of the code linked here stopped pretty quickly once it started working, so
+there are multiple silly ideas, tries, etc. commented out.
+
+The set-up is as follows:
+  1. you need the lib files from pci-utils (pciutils-dev on debian).
+
+  2. the command to build it is 
+
+gcc -g -O2 -o tosh5100-smcinit tosh5100-smcinit.c -lpci -L/usr/lib -I/usr/include/pci
+
+   assuming your pci-utils lib is where mine is.  put the binary in /usr/local/sbin.
+
+  3. enable the standard serial port (CONFIG_SERIAL) as a kernel module
+
+  4. /etc/serial.conf (debian) includes the line
+/dev/ttyS0 uart 16550 port 0x3F8 irq 3
+   which shows up in dmesg
+
+  5. add this line to /etc/modules.conf:
+pre-install smc-ircc /usr/local/sbin/tosh5100-smcinit
+
+  6. modprobe smc-ircc
+
+  5. irattach /dev/ttyS0
+
+  7. modprobe ircomm
+
+  8. if using a pilot with pilot-link, pilot-xfer -p /dev/ircomm0 -l
+
+I think that's it, although it's all buried in my start-up scripts now. Under
+Debian the the irattach etc. config files are stored in /etc/irda.conf, and I
+place an "irda" file in /etc/init.d when I want the IR enabled at boot.
+
+If this doesn't work for you, or you need some slightly different configuration
+(like different addresses, IRQs, or perhaps the 82801BAM), I suggest you get a
+digital camera (to see the IR beam, best suggestion I've heard in ages!), the
+datasheets for the 82801 and the 47N227, and have a play with these files:
+setpci.c PCI bridge set up
+setsmc.c SMC chip set up
+dumpsmc.c print SMC registers while r/w txmit/rcv (CPU burner! sufficiently fast that rcv picks up the glow even if no camera)
+
+Again I haven't abeen able to confirm whether the FIR does anything.
+Furthermore, Jonathan Buzzard's Toshiba HCI docs describe a call to set the SIR
+vs. FIR status which the work presented here does not access.
+
+(update 21 Aug 02) According to results from hacking around on the Toshiba
+Extras ACPI/HCI code, the SIR/FIR HCI call is not supported on this laptop.
+
+(update 30 Mar 03) After someone asked more questions about making this work on
+another Toshiba laptop, I compiled the following selection of log files and
+result messages:
+
+on the first modprobe smc-ircc (from the command line) for me it claims to
+fail:
+vista:~# modprobe smc-ircc
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: init_module: No such device
+Hint: insmod errors can be caused by incorrect module parameters,
+including invalid IO or IRQ parameters
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: insmod
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o failed
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: insmod smc-ircc failed
+
+dmesg and syslog have lots of debug announcements (still) but the interesting
+lines seem to be:
+found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+ircc_open()
+SMC IrDA Controller found
+ IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+irport_open_Ra001cb4a()
+irport_open_Ra001cb4a(), can't get iobase of 0x3f8
+...
+irport_close_R13d1bc18(), Releasing Region 3f8
+
+/var/log/messages should (might ?) also survive the crash:
+Mar 29 23:02:26 vista kernel: found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+Mar 29 23:02:26 vista kernel: SMC IrDA Controller found
+Mar 29 23:02:26 vista kernel:  IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+
+on the second modprobe smc-ircc attempt, no complaints at the command line.
+dmesg/syslog say
+found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+ircc_open()
+SMC IrDA Controller found
+ IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+irport_open_Ra001cb4a()
+IrDA: Registered device irda0
+
+and now /var/log/messages has 2 more relevant lines:
+Mar 29 23:08:09 vista kernel: found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+Mar 29 23:08:09 vista kernel: SMC IrDA Controller found
+Mar 29 23:08:09 vista kernel:  IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+Mar 29 23:08:09 vista kernel: IrDA: Registered device irda0
+Mar 29 23:08:09 vista /etc/hotplug/net.agent: assuming irda0 is already up
+
+Please note, as I discuss on the 5100 page, there is a conflict between using
+irda here and the non-kernel PCMCIA code, specifically the ide_cs module which
+is needed for e.g. mounting compact flash cards. Under 2.4.21-pre4/ACPI-patch I
+am able to rmmod/modprobe the various pcmcia and irda modules to go back and
+forth using both systems.
+
+I have now added
+pre-install ide-cs /etc/init.d/irda stop
+post-remove ide-cs /etc/init.d/irda start
+
+to my /etc/modules.conf file, this way the IrDA shuts down when I plug in my
+CompactFlash card (in a PCMCIA adaptor), then comes back when I pop the card
+out. This didn't play well with SWSUSP because irattach doesn't always go away
+on a SIGTERM; in my /etc/init.d/irda script you will see that I now 'kill -9'
+it if it doesn't die nicely.
+
+smc-ircc bug with SWSUSP (suspend to swap partition)
+
+The problem: once smc-ircc has been loaded (even if you later remove it),
+SWSUSP crashes at the end of the suspend when it says 'freeing memory'. The
+line I think is missing is not in in kernels 2.4.20, 2.4.21pre4, or 2.5.67.
+
+The fix: In the Linux source tree, find drivers/net/irda/smc-ircc.c. Go to the
+end of the file and find the routine ircc_close(). Add a line to make the
+beginning look like this:
+#ifdef MODULE
+static int __exit ircc_close(struct ircc_cb *self)
+{
+        int iobase;
+
+        IRDA_DEBUG(0, "%s()\n", __FUNCTION__);
+        ASSERT(self != NULL, return -1;);
+        iobase = self->irport->io.fir_base;
+        pm_unregister(self->pmdev);    // <<<<<---------- add this line
+        irport_close(self->irport);
+
+That's it; do 'make modules; make modules_install; rmmod smc-ircc; modprobe
+smc-ircc', and at least this part should not keep you from a sccessful suspend/
+resume.
+
+One more thing, I'm now using smsc-ircc2 (see Jean Tourrilhes' page and the 
+erratic source site for this code. This (currently) has the same pm_unregister
+() bug as smc-ircc above.
+
+I hope all of the above (smc-init and smc-ircc bugfix) works for you, or maybe
+helps, but there's absolutely no warranty -- if it doesn't work or otherwise
+causes your world to collapse, you may keep all the pieces.
+
+See also Linux on the Toshiba 5100-501.
+
+rob.
+-------------------------------------------------------------------------------
+Last modified: Fri Apr 25 22:44:46 WAT 2003

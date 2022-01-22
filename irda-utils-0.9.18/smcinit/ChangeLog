@@ -1,0 +1,59 @@
+2006-02-27 samuel 0.5 release
+	* Removed all distro specific stuff
+
+2004-04-20 claudiuc 0.4-1 release
+
+2004-04-20 claudiuc 
+	* add: added tosh2450-smcinit.c from José Manuel Mariño Mariño
+	It make Toshiba Satellite 2450-101 to work on IrDA. Probably
+	will be integrated in the general smcinit utility.
+
+2004-04-13 claudiuc 
+	* doc: Written man page for Thomas new smcinit, but still I need
+	to clean up old info.
+	* update: Thomas added more tweaks so we have more supported
+	laptops.
+	* fixes: getopt() fixes be me prevent crash when parsing command
+	line.
+	* rename: renamed tosh-smcinit.c to smcinit.c because it can be
+	used not only with Toshiba laptops, but at least with any 
+	LPC 47Nxxx SMSC-based chipset
+
+2003-07-10 claudiuc 
+	* doc: added README.Tom from Thomas Pinz
+	* improvement: added tosh-smcinit.c and tosh-superio.h from Thomas
+	Pinz which will replace the tosh5100-smcinit.c
+
+2003-07-10 claudiuc 0.3-1 release
+
+2003-07-10 claudiuc 
+	* doc:  written smcinit.8, improved the other 2 man pages,
+	improved README and INSTALL.
+	* compile: generate config.h because it's needed by *.c files
+	(fixed in Makefile)
+
+2003-07-08 claudiuc 
+	* doc: written INSTALL, updated AUTHORS, documentation from
+	Rob Miller; fixed LSM file, written README, improved SuSE
+	spec file
+	* prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
+	* redhat: RH 9.0 support (init script + spec file)
+
+2003-07-02 claudiuc 
+	* build: SuSE spec improved to generated compatible SuSE RPM
+	* compile: GNU'fied; now both utilities have --version and --help
+	options;
+	* doc: separated manual pages and some improvements
+
+2003-07-01  claudiuc
+	* cosmetic: renamed toshsat1800-irdasetup to tosh1800-smcinit
+	* build: improved original Makefile, spec file for SuSE, 
+	my configure script for build system
+	* compile: cleanup to remove warnings, broken compile; include
+	headers for used libc functions
+	* doc: first stage for my docs, manual page and renamed original
+	docs to avoid confusion
+	
+2002-04-07 Daniele Peri	
+	* Added ports 0x178 and 0x130
+	
